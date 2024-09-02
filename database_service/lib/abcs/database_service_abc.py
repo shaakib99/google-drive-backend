@@ -9,6 +9,11 @@ class DatabaseServiceABC(ABC):
     def disconnect(self):
         pass
 
+    @staticmethod
+    @abstractmethod
+    def get_instance() -> "DatabaseServiceABC":
+        pass
+
     @abstractmethod
     def getOne(self, id: str, schema):
         pass
@@ -26,5 +31,5 @@ class DatabaseServiceABC(ABC):
         pass
     
     @abstractmethod
-    def deleteOne(self, id: str):
+    def deleteOne(self, id: str, schema):
         pass
