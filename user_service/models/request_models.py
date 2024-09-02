@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class CreateUserModel(BaseModel):
     name: str = Field(min_length=2, max_length=255, pattern='[a-zA-Z]')
@@ -6,5 +7,5 @@ class CreateUserModel(BaseModel):
     password: str = Field(min_length= 8, max_length= 32, pattern='')
 
 class UpdateUserModel(BaseModel):
-    name: str = Field(min_length=2, max_length=255, pattern='[a-zA-Z]')
-    password: str = Field(min_length= 8, max_length= 32, pattern='')
+    name: Optional[str] = Field(min_length=2, max_length=255, pattern='[a-zA-Z]')
+    password: Optional[str] = Field(min_length= 8, max_length= 32, pattern='')
