@@ -20,6 +20,10 @@ class MySQLService(DatabaseServiceABC):
         self.engine.dispose()
     
     @staticmethod
+    def get_base() -> DeclarativeBase:
+        return MySQLService.get_instance().base
+    
+    @staticmethod
     def get_instance():
         if MySQLService.instance is None:
             MySQLService.instance = MySQLService()

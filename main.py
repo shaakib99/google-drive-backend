@@ -1,9 +1,11 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
+from database_service.service import DatabaseService
 
 async def lifespan(app):
     load_dotenv()
+    DatabaseService(None).connect()
     yield
 
 app = FastAPI(lifespan=lifespan)

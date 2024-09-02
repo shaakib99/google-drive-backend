@@ -1,27 +1,27 @@
-from database_service.mysql_service import MySQLService
-from database_service.lib.abcs.database_service_abc import DatabaseServiceABC
-from sqlalchemy.orm import DeclarativeBase
 from database_service.models.query_param import QueryParamsModel
+from database_service.service import DatabaseService
+from user_service.schemas.user_schema import UserSchema
+from common.exceptions import NotFoundException
+from user_service.models.request_models import CreateUserModel, UpdateUserModel
 
-class DatabaseService:
-    def __init__(self, schema: DeclarativeBase,  db: DatabaseServiceABC = MySQLService.get_instance()):
-        self.db = db
-        self.schema = schema
-    
-    def connect(self):
-        self.db.connect()
-    
-    def disconnect(self):
-        self.db.disconnect()
+class UsersService:
+    def __init__(self, user_model = DatabaseService(UserSchema)):
+        self.user_model = user_model
     
     def getOne(self, id: str):
-        return self.db.getOne(id, self.schema)
-
+        user = self.user_model.getOne(id)
+        if not user:
+            raise NotFoundException(f'{id} not found')
+        return user
+    
     def getAll(self, query: QueryParamsModel):
-        return self.db.getAll(query, self.schema)
+        return self.user_model.getAll(query)
     
-    def updateOne(self, id: str, data: dict):
-        return self.db.updateOne(id, data, self.schema)
+    def createOne(self, data: CreateUserModel):
+        return self.user_model.createOne(data)
     
-    def deleteOne(self, id: str):
-        return self.db.deleteOne(id, self.schema)
+    def updateOne(self, id: int, data: UpdateUserModel):
+        return self.user_model.updateOne(id, data)
+    
+    def deleteOne(self, id: int):
+        return self.user_model.deleteOne(id)
