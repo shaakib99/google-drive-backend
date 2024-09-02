@@ -19,21 +19,21 @@ async def getOne(
     users_service: Annotated[UsersService, Depends(UsersService)]):
     return users_service.getOne(id)
 
-@router.post('')
+@router.post('', response_model=UserResponseModel, response_model_exclude_none=True)
 async def createOne(
     id: str, 
     data: CreateUserModel, 
     users_service: Annotated[UsersService, Depends(UsersService)]):
     return users_service.createOne(data)
 
-@router.patch('/{id}')
+@router.patch('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)
 async def updateOne(
     id: str, 
     data: UpdateUserModel, 
     users_service: Annotated[UsersService, Depends(UsersService)]):
     return users_service.updateOne(id, data)
 
-@router.put('/{id}')
+@router.put('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)
 async def updateFile(
     id: str, 
     users_service: Annotated[UsersService, Depends(UsersService)]):
