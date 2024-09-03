@@ -5,6 +5,7 @@ class UserModel(BaseModel):
     name: str
     email: str
     password: str
+    profile_picture: str
     password_reset_token: str
     is_active: str
 
