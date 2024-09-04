@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
 from database_service.service import DatabaseService
+from user_service.route import router as user_router
 
 async def lifespan(app):
     load_dotenv()
@@ -10,7 +11,7 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-routers: list[APIRouter] = []
+routers: list[APIRouter] = [user_router]
 
 for router in routers:
     app.include_router(router)
