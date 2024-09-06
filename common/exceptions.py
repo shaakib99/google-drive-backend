@@ -7,3 +7,7 @@ class NotFoundException(HTTPException):
 class UnauthorizeException(HTTPException):
     def __init__(self, message: str = 'Not authorize'):
         super().__init__(status_code = 401, detail = message)
+    
+class BadRequestException(HTTPException):
+    def __init__(self, message: str = 'Bad Request'):
+        super().__init__(status_code = 400, detail = message)

@@ -4,8 +4,6 @@ from database_service.models.query_param import QueryParamsModel
 from user_service.service import UsersService
 from user_service.models.request_models import CreateUserModel, UpdateUserModel
 from user_service.models.response_models import UserResponseModel
-from common.interceptors.use_interceptor import UseInterceptor
-from common.interceptors.response_interceptor import ResponseInterceptor
 from common.guards.jwt_auth_guard import JWTAuthGuard
 from common.guards.use_guard import UseGuard
 from common.models.dependencies import CommonDependencies
@@ -41,11 +39,9 @@ async def updateOne(
 
 @router.put('/{id}')
 @UseGuard(JWTAuthGuard())
-@UseInterceptor(ResponseInterceptor())
 async def updateFile(
     id: str, 
     CommonDependencies: Annotated[CommonDependencies, Depends(CommonDependencies)]):
-    print(CommonDependencies.user)
     return 'hello'
 
 @router.delete('/{id}')

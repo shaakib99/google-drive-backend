@@ -3,6 +3,7 @@ from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
 from database_service.service import DatabaseService
 from user_service.route import router as user_router
+from common.middlewares.response_middleware import ResponseMiddleware
 
 async def lifespan(app):
     load_dotenv()
@@ -22,6 +23,7 @@ app.add_middleware(cors.CORSMiddleware,
     allow_origins = ['*'], 
     allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allow_headers = ['*'])
+app.add_middleware(ResponseMiddleware)
 
 
 
