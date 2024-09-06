@@ -1,8 +1,9 @@
-from common.lib.abcs.guard_abc import GuardABC
+from common.guards.lib.abcs.guard_abc import GuardABC
 from user_service.schemas.user_schema import UserSchema
 from user_service.service import UsersService
-from fastapi import Request, Response
 from common.exceptions import UnauthorizeException
+from common.models.dependencies import CommonDependencies
+from user_service.models.user_model import UserModel
 from jwt import decode
 import os
 
@@ -10,13 +11,16 @@ class JWTAuthGuard(GuardABC):
     def __init__(self, users_service = UsersService()):
         self.users_service = UsersService
 
-    def invoke_guard(self, req: Request , res: Response):
-        token = req.headers.get('X-DRIVE-TOKEN')
+    async def dispatch(self, dependecies: CommonDependencies):
+        dependecies.user ={'id': 1}
+        req = dependecies.request
+        token = req.headers.get('X-DRIVE-KEY')
 
         if not token:
             raise UnauthorizeException()
         
-        return self.validate_token(token)
+        user = await self.validate_token(token)
+        dependecies.user = UserModel.model_validate(user)
     
     def validate_token(self, token: str) -> UserSchema:
         user_dict = decode(token, os.getenv('JWT_SECRET'), algorithms='HS256')

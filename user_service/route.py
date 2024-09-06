@@ -4,10 +4,11 @@ from database_service.models.query_param import QueryParamsModel
 from user_service.service import UsersService
 from user_service.models.request_models import CreateUserModel, UpdateUserModel
 from user_service.models.response_models import UserResponseModel
-from user_service.schemas.user_schema import UserSchema
-from common.guards.use_guard import UseGuard
+from common.interceptors.use_interceptor import UseInterceptor
+from common.interceptors.response_interceptor import ResponseInterceptor
 from common.guards.jwt_auth_guard import JWTAuthGuard
-
+from common.guards.use_guard import UseGuard
+from common.models.dependencies import CommonDependencies
 
 router = APIRouter(prefix='/users')
 
@@ -37,12 +38,14 @@ async def updateOne(
     users_service: Annotated[UsersService, Depends(UsersService)]):
     return users_service.updateOne(id, data)
 
+
 @router.put('/{id}')
+@UseGuard(JWTAuthGuard())
+@UseInterceptor(ResponseInterceptor())
 async def updateFile(
     id: str, 
-    user: Annotated[UserSchema, Depends(UseGuard(JWTAuthGuard()))],
-    users_service: Annotated[UsersService, Depends(UsersService)]
-    ):
+    CommonDependencies: Annotated[CommonDependencies, Depends(CommonDependencies)]):
+    print(CommonDependencies.user)
     return 'hello'
 
 @router.delete('/{id}')

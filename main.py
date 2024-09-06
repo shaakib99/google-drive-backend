@@ -8,6 +8,7 @@ async def lifespan(app):
     load_dotenv()
     DatabaseService(None).connect()
     yield
+    DatabaseService(None).disconnect()
 
 app = FastAPI(lifespan=lifespan)
 
