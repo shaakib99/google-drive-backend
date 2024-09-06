@@ -6,7 +6,6 @@ class UseInterceptor:
         self.interceptor = interceptor
 
     def __call__(self, func: callable):
-
         @wraps(func)
         async def wrappper(*args, **kwargs):
             dependencies = kwargs.get('CommonDependencies')

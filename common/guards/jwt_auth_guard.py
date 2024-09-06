@@ -12,7 +12,6 @@ class JWTAuthGuard(GuardABC):
         self.users_service = UsersService
 
     async def dispatch(self, dependecies: CommonDependencies):
-        dependecies.user ={'id': 1}
         req = dependecies.request
         token = req.headers.get('X-DRIVE-KEY')
 
