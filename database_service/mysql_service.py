@@ -7,17 +7,19 @@ import os
 class MySQLService(DatabaseServiceABC):
     instance = None
     def __init__(self) -> None:
+        self.base = declarative_base()
         self.connect()
 
     def connect(self):
         self.engine = create_engine(os.getenv("DB_URL", "localhost"))
         self.session: Session = sessionmaker(bind=self.engine, autoflush=True)()
-        self.base = declarative_base()
-        self.base.metadata.create_all(self.engine)
 
     def disconnect(self):
         self.session.close()
         self.engine.dispose()
+    
+    def create_metadata(self):
+        self.base.metadata.create_all(self.engine)
     
     @staticmethod
     def get_base() -> DeclarativeBase:

@@ -14,6 +14,9 @@ class DatabaseService:
     def disconnect(self):
         self.db.disconnect()
     
+    def create_metadata(self):
+        self.db.create_metadata()
+    
     def getOne(self, id: str):
         return self.db.getOne(id, self.schema)
 

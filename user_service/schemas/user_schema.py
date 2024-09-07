@@ -2,7 +2,7 @@ from database_service.mysql_service import MySQLService
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from datetime import datetime
 
-Base = MySQLService.get_instance().base
+Base = MySQLService.get_base()
 
 class UserSchema(Base):
     __tablename__ = 'users'

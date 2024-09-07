@@ -7,9 +7,11 @@ from common.middlewares.response_middleware import ResponseMiddleware
 
 async def lifespan(app):
     load_dotenv()
-    DatabaseService(None).connect()
+    db_service = DatabaseService(None)
+    db_service.connect()
+    db_service.create_metadata()
     yield
-    DatabaseService(None).disconnect()
+    db_service.disconnect()
 
 app = FastAPI(lifespan=lifespan)
 
@@ -23,6 +25,7 @@ app.add_middleware(cors.CORSMiddleware,
     allow_origins = ['*'], 
     allow_methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allow_headers = ['*'])
+# custom middlewares
 app.add_middleware(ResponseMiddleware)
 
 

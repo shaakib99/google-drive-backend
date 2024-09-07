@@ -13,7 +13,7 @@ router = APIRouter(prefix='/users')
 @router.get('', response_model=list[UserResponseModel], response_model_exclude_none=True)
 async def getAll(
     query: Annotated[QueryParamsModel, Depends(QueryParamsModel)], 
-    users_service: Annotated[UsersService, Depends(UsersService)]):
+    users_service: Annotated[UsersService, Depends(lambda: UsersService())]):
     return users_service.getAll(query)
 
 @router.get('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)
@@ -41,7 +41,9 @@ async def updateOne(
 @UseGuard(JWTAuthGuard())
 async def updateFile(
     id: str, 
-    CommonDependencies: Annotated[CommonDependencies, Depends(CommonDependencies)]):
+    CommonDependencies: Annotated[CommonDependencies, Depends(CommonDependencies)],
+    users_service: Annotated[UsersService, Depends(lambda: UsersService())]
+    ):
     return 'hello'
 
 @router.delete('/{id}')

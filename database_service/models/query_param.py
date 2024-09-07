@@ -1,11 +1,12 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class QueryParamsModel(BaseModel):
-    limit: int = 10
-    skip: int = 0
-    selected_fields: list[str] = []
-    join_fields: list[str] = []
-    filter_by: str = None
-    group_by: str = None
-    order_by: str = None
-    having: str = None
+    limit: Optional[int] = 10
+    skip: Optional[int] = 0
+    selected_fields: Optional[list[str]] = []
+    join_fields: Optional[list[str]] = []
+    filter_by: Optional[str] = None
+    group_by: Optional[str] = None
+    order_by: Optional[str]= None
+    having: Optional[str] = None
