@@ -14,13 +14,13 @@ class JWTAuthGuard(GuardABC):
 
     async def dispatch(self, dependecies: CommonDependencies):
         req = dependecies.request
-        # token = req.headers.get('X-DRIVE-KEY')
+        token = req.headers.get('X-DRIVE-KEY')
 
-        # if not token:
-        #     raise UnauthorizeException()
+        if not token:
+            raise UnauthorizeException()
         
-        # user = await self.validate_token(token)
-        # dependecies.user = UserModel.model_validate(user)
+        user = await self.validate_token(token)
+        dependecies.user = UserModel.model_validate(user)
     
     def validate_token(self, token: str) -> UserSchema:
         user_dict = decode(token, os.getenv('JWT_SECRET'), algorithms='HS256')
