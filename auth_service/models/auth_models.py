@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from user_service.models.request_models import password_requirements
 
 class LoginModel(BaseModel):
