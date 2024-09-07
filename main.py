@@ -3,6 +3,7 @@ from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
 from database_service.service import DatabaseService
 from user_service.route import router as user_router
+from auth_service.route import router as auth_router
 from common.middlewares.response_middleware import ResponseMiddleware
 
 async def lifespan(app):
@@ -15,7 +16,7 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-routers: list[APIRouter] = [user_router]
+routers: list[APIRouter] = [user_router, auth_router]
 
 for router in routers:
     app.include_router(router)

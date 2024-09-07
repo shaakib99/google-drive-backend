@@ -2,8 +2,10 @@ from database_service.mysql_service import MySQLService
 from database_service.lib.abcs.database_service_abc import DatabaseServiceABC
 from sqlalchemy.orm import DeclarativeBase
 from database_service.models.query_param import QueryParamsModel
+from typing import TypeVar, Generic
 
-class DatabaseService:
+T = TypeVar('T')
+class DatabaseService(Generic[T]):
     def __init__(self, schema: DeclarativeBase,  db: DatabaseServiceABC = MySQLService.get_instance()):
         self.db = db
         self.schema = schema
@@ -17,16 +19,16 @@ class DatabaseService:
     def create_metadata(self):
         self.db.create_metadata()
     
-    def getOne(self, id: str):
+    def getOne(self, id: str) -> T:
         return self.db.getOne(id, self.schema)
 
-    def getAll(self, query: QueryParamsModel):
+    def getAll(self, query: QueryParamsModel) -> list[T]:
         return self.db.getAll(query, self.schema)
     
-    def createOne(self, data: dict):
+    def createOne(self, data: dict) -> T:
         return self.db.createOne(data, self.schema)
     
-    def updateOne(self, id: str, data: dict):
+    def updateOne(self, id: str, data: dict) -> T:
         return self.db.updateOne(id, data, self.schema)
     
     def deleteOne(self, id: str):
