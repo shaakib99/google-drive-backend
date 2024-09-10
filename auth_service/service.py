@@ -47,7 +47,7 @@ class AuthService:
     def generate_password_reset_token(self, data: GenerateResetPasswordTokenModel):
         query = QueryParamsModel()
         query.limit = 1
-        query.filter_by = "email=%s" % (data.email)
+        query.filter_by = "email='%s'" % (data.email)
         users = self.user_model.getAll(query)
         
         if len(users) == 0:

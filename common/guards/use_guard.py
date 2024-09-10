@@ -9,7 +9,10 @@ class UseGuard:
     def __call__(self, func: Callable):
         @wraps(func)
         async def wrapper(*args, **kwargs):
-            # dependecies = kwargs.get('CommonDependencies')
-            # await self.guard.dispatch(dependecies)
-            return await func(*args, **kwargs)
+            dependecies = kwargs.get('dependencies')
+            del kwargs['dependencies']
+
+            await self.guard.dispatch(dependecies)
+
+            return await func(*args, dependecies = dependecies **kwargs)
         return wrapper

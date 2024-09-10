@@ -7,6 +7,7 @@ from user_service.models.response_models import UserResponseModel
 from common.guards.jwt_auth_guard import JWTAuthGuard
 from common.guards.use_guard import UseGuard
 from common.models.dependencies import CommonDependencies
+from common.utils import inject_common_dependencies
 
 router = APIRouter(prefix='/users')
 
@@ -41,7 +42,7 @@ async def updateOne(
 @UseGuard(JWTAuthGuard())
 async def updateFile(
     id: str, 
-    CommonDependencies: Annotated[CommonDependencies, Depends(CommonDependencies)],
+    dependencies: Annotated[CommonDependencies, Depends(inject_common_dependencies)],
     users_service: Annotated[UsersService, Depends(lambda: UsersService())]
     ):
     return 'hello'
