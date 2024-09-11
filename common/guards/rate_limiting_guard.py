@@ -22,20 +22,20 @@ class RateLimitingGuard(GuardABC):
             data[key] = RateLimitingModel(available_token=self.max_token - 1, last_updated_at=datetime.now())
             return
         
-        info: RateLimitingModel = data[key]
-        time_diff = (datetime.now() - info.last_updated_at).seconds
+        rate_limiting_info: RateLimitingModel = data[key]
+        time_diff = (datetime.now() - rate_limiting_info.last_updated_at).seconds
 
-        if time_diff < 60 and info.available_token == 0:
+        if time_diff < 60 and rate_limiting_info.available_token == 0:
             raise TooManyRequestException()
         
-        if time_diff < 60 and info.available_token > 0:
-            info.available_token = info.available_token - 1
+        if time_diff < 60 and rate_limiting_info.available_token > 0:
+            rate_limiting_info.available_token = rate_limiting_info.available_token - 1
 
         if time_diff > 60:
-            info.available_token = self.max_token
+            rate_limiting_info.available_token = self.max_token
     
-        info.last_updated_at = datetime.now()
-        data[key] = info
+        rate_limiting_info.last_updated_at = datetime.now()
+        data[key] = rate_limiting_info
 
         
         

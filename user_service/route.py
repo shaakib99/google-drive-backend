@@ -43,7 +43,7 @@ async def updateOne(
 
 @router.put('/update-profile-picture')
 @UseGuard(RateLimitingGuard())
-# @UseGuard(JWTAuthGuard())
+@UseGuard(JWTAuthGuard())
 async def updateProfilePicture(
     file: UploadFile,
     dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)],
