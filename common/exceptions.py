@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from fastapi import HTTPException
 
 class NotFoundException(HTTPException):
@@ -11,3 +12,7 @@ class UnauthorizeException(HTTPException):
 class BadRequestException(HTTPException):
     def __init__(self, message: str = 'Bad Request'):
         super().__init__(status_code = 400, detail = message)
+
+class TooManyRequestException(HTTPException):
+    def __init__(self, message: str = 'Too many request') -> None:
+        super().__init__(status_code = 429, detail = message)

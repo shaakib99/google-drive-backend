@@ -3,7 +3,7 @@ from fastapi import Request, Response
 from user_service.models.user_model import UserModel
 from typing import Optional
 
-class CommonDependencies(BaseModel):
+class CommonDependenciesModel(BaseModel):
     request: Request
     user: Optional[UserModel] = None
 

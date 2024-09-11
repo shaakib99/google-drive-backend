@@ -3,7 +3,7 @@ from auth_service.models.auth_models import LoginModel, GenerateResetPasswordTok
 from auth_service.service import AuthService
 from common.interceptors.use_interceptor import UseInterceptor
 from common.interceptors.email_interceptor import EmailInterceptor
-from common.models.dependencies import CommonDependencies
+from common.models.dependencies_model import CommonDependenciesModel
 from common.utils import inject_common_dependencies
 from typing import Annotated
 
@@ -22,7 +22,7 @@ async def login(
 async def generate_reset_password_token(
     data: GenerateResetPasswordTokenModel, 
     auth_service: Annotated[AuthService, Depends(lambda: AuthService())],
-    dependencies: Annotated[CommonDependencies, Depends(inject_common_dependencies)]
+    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)]
     ):
     return await auth_service.generate_password_reset_token(data)
 
