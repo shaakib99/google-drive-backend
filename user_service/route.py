@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 from typing import Annotated
 from database_service.models.query_param import QueryParamsModel
 from user_service.service import UsersService
@@ -38,13 +38,14 @@ async def updateOne(
     return users_service.updateOne(id, data)
 
 
-@router.put('/{id}')
+@router.put('/update-profile-picture')
 @UseGuard(JWTAuthGuard())
-async def updateFile(
-    id: str, 
+async def updateProfilePicture(
+    file: UploadFile,
     dependencies: Annotated[CommonDependencies, Depends(inject_common_dependencies)],
     users_service: Annotated[UsersService, Depends(lambda: UsersService())]
     ):
+    print(f"file size {file.size / 1000} kb")
     return 'hello'
 
 @router.delete('/{id}')
