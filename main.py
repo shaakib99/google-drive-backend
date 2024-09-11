@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter
 from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
 from database_service.service import DatabaseService
+from cache_service.service import CacheService
 from user_service.route import router as user_router
 from auth_service.route import router as auth_router
 from common.middlewares.response_middleware import ResponseMiddleware
@@ -11,8 +12,12 @@ async def lifespan(app):
     db_service = DatabaseService(None)
     db_service.connect()
     db_service.create_metadata()
+
+    cache_service = CacheService()
+    cache_service.connect()
     yield
     db_service.disconnect()
+    cache_service.disconnect()
 
 app = FastAPI(lifespan=lifespan)
 

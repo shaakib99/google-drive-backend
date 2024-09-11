@@ -11,6 +11,8 @@ from common.models.dependencies_model import CommonDependenciesModel
 from common.utils import inject_common_dependencies
 from file_service.service import FileUploadService
 from file_service.local_storage_provider import LocalStorageProvider
+from common.interceptors.use_interceptor import UseInterceptor
+from common.interceptors.cache_interceptor import CacheInterceptor
 
 router = APIRouter(prefix='/users')
 
@@ -42,8 +44,9 @@ async def updateOne(
 
 
 @router.put('/update-profile-picture')
-@UseGuard(RateLimitingGuard())
-@UseGuard(JWTAuthGuard())
+@UseInterceptor(CacheInterceptor('test', 'ENDPOINT:'))
+# @UseGuard(RateLimitingGuard())
+# @UseGuard(JWTAuthGuard())
 async def updateProfilePicture(
     file: UploadFile,
     dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)],

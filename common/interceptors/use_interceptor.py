@@ -12,5 +12,5 @@ class UseInterceptor:
         async def wrappper(*args,  **kwargs):
             dependencies: CommonDependenciesModel = kwargs.get('dependencies')
             del kwargs['dependencies']
-            await self.interceptor.intercept(func, dependencies, *args, **kwargs)
+            return await self.interceptor.intercept(func, dependencies, *args, **kwargs)
         return wrappper
