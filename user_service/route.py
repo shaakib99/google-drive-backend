@@ -8,6 +8,8 @@ from common.guards.jwt_auth_guard import JWTAuthGuard
 from common.guards.use_guard import UseGuard
 from common.models.dependencies import CommonDependencies
 from common.utils import inject_common_dependencies
+from file_service.service import FileUploadService
+from file_service.local_storage_provider import LocalStorageProvider
 
 router = APIRouter(prefix='/users')
 
@@ -39,13 +41,14 @@ async def updateOne(
 
 
 @router.put('/update-profile-picture')
-@UseGuard(JWTAuthGuard())
+# @UseGuard(JWTAuthGuard())
 async def updateProfilePicture(
     file: UploadFile,
     dependencies: Annotated[CommonDependencies, Depends(inject_common_dependencies)],
-    users_service: Annotated[UsersService, Depends(lambda: UsersService())]
+    users_service: Annotated[UsersService, Depends(lambda: UsersService())],
+    file_service: Annotated[FileUploadService, Depends(lambda: FileUploadService(LocalStorageProvider()))]
     ):
-    print(f"file size {file.size / 1000} kb")
+    f = await file_service.upload(file)
     return 'hello'
 
 @router.delete('/{id}')

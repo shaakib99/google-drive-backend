@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class FileModel(BaseModel):
-    id: int
+    id: Optional[int] = None
     url: str
     provider: str
     mimetype: str
-    is_deleted: bool
-    created_date: datetime
+    is_deleted: Optional[bool] = None
+    created_date: Optional[datetime] = None
 
     class Config:
         from_attribute = True

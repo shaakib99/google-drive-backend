@@ -1,11 +1,32 @@
 from file_service.lib.abcs.provider_abc import FileProviderABC
+from file_service.models.file_model import FileModel
+from fastapi import UploadFile
+import random
+import string
+import os
 
 class LocalStorageProvider(FileProviderABC):
     def __init__(self) -> None:
         pass
 
-    def upload(self, file: bytes):
-        pass
+    async def upload(self, file: UploadFile, dir = '/files/') -> FileModel:
+        file_name_initial = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(15))
+        file_ext = file.filename.split('.')[-1]
+        file_dir = f'{dir}{file_name_initial}.{file_ext}'
 
-    def upload_multiple(self, files: list[bytes]):
-        pass
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+
+        with open(file_dir, 'w+') as f:
+            byte_format = await file.read()
+            f.write(byte_format.decode('utf-8'))
+        
+        return FileModel(url=file_dir, mimetype=file.content_type, provider='LOCAL')
+        
+
+    async def upload_multiple(self, files: list[UploadFile]) -> list[FileModel]:
+        res = []
+        for file in files:
+            f = await self.upload(file)
+            res.append(f)
+        return res
