@@ -32,7 +32,6 @@ class RedisCacheService(CacheABC):
 
     def set(self,key: str, data: dict) -> None:
         data_str = json.dumps(data)
-        print(data_str, key)
         self.connection.set(key, data_str)
         return 
 

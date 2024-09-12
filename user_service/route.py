@@ -44,8 +44,8 @@ async def updateOne(
 
 
 @router.put('/update-profile-picture')
-@UseInterceptor(CacheInterceptor('test', 'ENDPOINT:'))
-# @UseGuard(RateLimitingGuard())
+# @UseInterceptor(CacheInterceptor('test', 'ENDPOINT:'))
+@UseGuard(RateLimitingGuard())
 # @UseGuard(JWTAuthGuard())
 async def updateProfilePicture(
     file: UploadFile,
