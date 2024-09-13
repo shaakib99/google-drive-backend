@@ -2,24 +2,28 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 from fastapi import Request, Response
 from typing import Callable
-from opentelemetry import trace, metrics
+from opentelemetry import trace
 from datetime import datetime
+from census_service.collectable_data import request_counter
 import json
-
 
 class ResponseMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
         super().__init__(app)
 
     async def dispatch(self, request:Request, call_next:Callable):
+        if request.url.path == '/metrics':
+            return await call_next(request)
+        
+        request_counter.inc(1)
+        
         tracer = trace.get_tracer('drive_backend.tracer')
-        meter = metrics.get_meter('drive_backend.meter')
 
         request_start_time = datetime.now()
 
         request_body = (await request.body()).decode('utf-8')
 
-        with tracer.start_as_current_span(f"[{request.method}] {request.base_url.path}") as drive_span:
+        with tracer.start_as_current_span(f"[{request.method}] {request.url.path}") as drive_span:
             # drive_span.set_attribute('request.request_headers', json.dumps(request.headers))
             drive_span.set_attribute('request.method', request.method.lower())
             drive_span.set_attribute('request.query_params', json.dumps(request.query_params.__str__()))

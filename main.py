@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Response
 from fastapi.middleware import gzip, cors
 from dotenv import load_dotenv
 from database_service.service import DatabaseService
@@ -6,6 +6,7 @@ from cache_service.service import CacheService
 from user_service.route import router as user_router
 from auth_service.route import router as auth_router
 from common.middlewares.response_middleware import ResponseMiddleware
+from census_service.collectable_data import generate_data
 
 async def lifespan(app):
     load_dotenv()
@@ -33,6 +34,13 @@ app.add_middleware(cors.CORSMiddleware,
     allow_headers = ['*'])
 # custom middlewares
 app.add_middleware(ResponseMiddleware)
+
+@app.get('/metrics')
+async def metrics():
+    return Response(
+        content= generate_data(), 
+        status_code=200, 
+        media_type='text/plain')
 
 
 
