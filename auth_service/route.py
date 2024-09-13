@@ -33,6 +33,6 @@ async def generate_reset_password_token(
 
 @router.put('/reset-password')
 async def reset_password(
-    data: Annotated[ResetPasswordModel, Depends(ResetPasswordModel)], 
+    data: ResetPasswordModel, 
     auth_service: Annotated[AuthService, Depends(lambda: AuthService())]):
     return await auth_service.reset_password(data)
