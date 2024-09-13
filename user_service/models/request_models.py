@@ -9,6 +9,6 @@ class CreateUserModel(BaseModel):
     password: str = password_requirements
 
 class UpdateUserModel(BaseModel):
-    name: Optional[str] = Field(min_length=2, max_length=255, pattern='[a-zA-Z]')
-    password: Optional[str] = password_requirements
+    name: Optional[str] = None
+    password: Optional[str] = None
 

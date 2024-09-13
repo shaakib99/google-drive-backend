@@ -1,6 +1,7 @@
 from database_service.models.query_param import QueryParamsModel
 from database_service.service import DatabaseService
 from user_service.schemas.user_schema import UserSchema
+from user_service.models.user_model import UserModel
 from common.exceptions import NotFoundException
 from user_service.models.request_models import CreateUserModel, UpdateUserModel
 
@@ -21,7 +22,14 @@ class UsersService:
         return self.user_model.createOne(data)
     
     def updateOne(self, id: int, data: UpdateUserModel):
-        return self.user_model.updateOne(id, data)
+        user = self.getOne(id)
+        user_model = UserModel.model_validate(user)
+
+        for key, value in data.model_dump().items():
+            setattr(user_model, key, value)
+        
+        return self.user_model.updateOne(id, user_model)
     
     def deleteOne(self, id: int):
+        self.getOne(id)
         return self.user_model.deleteOne(id)
