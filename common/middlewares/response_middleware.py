@@ -33,8 +33,13 @@ class ResponseMiddleware(BaseHTTPMiddleware):
             else:
                 custom_response_content['status'] = 'FAILED'
                 custom_response_content['message'] = data['detail'] if 'detail' in data else data
+            
+            header_map = {}
+            for header, value in response.headers.items():
+                if header.lower() == 'content-length': continue
+                header_map[header] = value
 
-            return JSONResponse(content=custom_response_content, status_code=response.status_code)
+            return JSONResponse(content=custom_response_content, status_code=response.status_code, headers=header_map)
         except Exception as e:
             custom_response_content = {
                 "status_code": 500,

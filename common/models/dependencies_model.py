@@ -5,6 +5,7 @@ from typing import Optional
 
 class CommonDependenciesModel(BaseModel):
     request: Request
+    response: Response
     user: Optional[UserModel] = None
 
     class Config:

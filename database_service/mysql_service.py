@@ -2,6 +2,7 @@ from database_service.lib.abcs.database_service_abc import DatabaseServiceABC
 from database_service.models.query_param import QueryParamsModel
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, declarative_base, Session, load_only, joinedload, exc
 from sqlalchemy import create_engine, text
+from pydantic import BaseModel
 import os
 
 class MySQLService(DatabaseServiceABC):
@@ -64,18 +65,18 @@ class MySQLService(DatabaseServiceABC):
 
         return cursor.all()
 
-    def createOne(self, data: dict, schema: DeclarativeBase):
-        model = schema(**data)
+    def createOne(self, data: BaseModel, schema: DeclarativeBase):
+        model = schema(**data.model_dump())
         self.session.add(model)
         self.session.commit()
         return model
 
-    def updateOne(self, id: str, data: dict, schema: DeclarativeBase):
+    def updateOne(self, id: str, data: BaseModel, schema: DeclarativeBase):
         model = self.getOne(id, schema)
         if not model: 
             raise exc.NoResultFound()
 
-        for key, value in data.items():
+        for key, value in data.model_dump().items():
             setattr(model, key, value)
         
         self.session.commit()

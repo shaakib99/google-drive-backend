@@ -30,9 +30,8 @@ async def getOne(
 
 @router.post('', response_model=UserResponseModel, response_model_exclude_none=True)
 async def createOne(
-    id: str, 
     data: CreateUserModel, 
-    users_service: Annotated[UsersService, Depends(UsersService)]):
+    users_service: Annotated[UsersService, Depends(lambda: UsersService())]):
     return users_service.createOne(data)
 
 @router.patch('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)

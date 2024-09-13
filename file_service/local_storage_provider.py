@@ -1,6 +1,7 @@
 from file_service.lib.abcs.provider_abc import FileProviderABC
 from file_service.models.file_model import FileModel
 from fastapi import UploadFile
+from common.utils import generate_random_characters
 import random
 import string
 import os
@@ -10,7 +11,7 @@ class LocalStorageProvider(FileProviderABC):
         pass
 
     async def upload(self, file: UploadFile, dir = '/files/') -> FileModel:
-        file_name_initial = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(15))
+        file_name_initial = generate_random_characters(15)
         file_ext = file.filename.split('.')[-1]
         file_dir = f'{dir}{file_name_initial}.{file_ext}'
 

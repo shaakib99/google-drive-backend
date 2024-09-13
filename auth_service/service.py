@@ -10,7 +10,7 @@ class AuthService:
     def __init__(self, model: DatabaseService[UserSchema] = DatabaseService(UserSchema)):
         self.user_model = model
     
-    def login(self, loginModel: LoginModel):
+    async def login(self, loginModel: LoginModel):
         encrypted_password = loginModel.password
         query  = QueryParamsModel()
         query.limit = 1
@@ -20,7 +20,7 @@ class AuthService:
 
         if len(users) == 0:
             raise NotFoundException('Email and password not found')
-        return {}
+        return users[0]
         
     def reset_password(self, data:ResetPasswordModel):
         query = QueryParamsModel()

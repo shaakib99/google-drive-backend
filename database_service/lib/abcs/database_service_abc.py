@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pydantic import BaseModel
 
 class DatabaseServiceABC(ABC):
     @abstractmethod
@@ -27,11 +28,11 @@ class DatabaseServiceABC(ABC):
         pass
 
     @abstractmethod
-    def createOne(self, data: dict, schema):
+    def createOne(self, data: BaseModel, schema):
         pass
 
     @abstractmethod
-    def updateOne(self, id: str, data: dict, schema):
+    def updateOne(self, id: str, data: BaseModel, schema):
         pass
     
     @abstractmethod
