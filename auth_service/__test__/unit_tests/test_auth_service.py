@@ -64,4 +64,29 @@ async def test_reset_password(mock_database_service, user_model_data):
 
     assert result.id is not None, 'Should have found the user'
 
+@pytest.mark.asyncio
+@patch('database_service.service.DatabaseService')
+async def test_generate_reset_password_token(mock_database_service, user_model_data):
+    mock_database_service_instance = mock_database_service(UserSchema)
+    auth_service = AuthService(mock_database_service_instance)
+
+    reset_password_model = GenerateResetPasswordTokenModel(email='test@email.com')
+
+    # mock expected result
+    mock_database_service_instance.getAll.return_value = []
+
+    try:
+        await auth_service.generate_password_reset_token(reset_password_model)
+    except Exception as e:
+        assert isinstance(e, NotFoundException), 'Should not be able to find user'
+
+    
+    # mock expected result
+    mock_database_service_instance.getAll.return_value = [user_model_data]
+    mock_database_service_instance.updateOne.return_value = user_model_data
+
+    result = await auth_service.generate_password_reset_token(reset_password_model)
+
+    assert result.id is not None, 'Should have updated password_reset_token'
+
     

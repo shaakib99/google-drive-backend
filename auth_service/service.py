@@ -44,7 +44,7 @@ class AuthService:
         return user
 
 
-    def generate_password_reset_token(self, data: GenerateResetPasswordTokenModel):
+    async def generate_password_reset_token(self, data: GenerateResetPasswordTokenModel):
         query = QueryParamsModel()
         query.limit = 1
         query.filter_by = "email='%s'" % (data.email)
@@ -57,6 +57,6 @@ class AuthService:
 
         user.password_reset_token = ''
         user.password_reset_token_generated_at = datetime.now()
-        user = self.user_model.updateOne(user.id, UserModel(user).model_dump())
+        user = self.user_model.updateOne(user.id, UserModel(**user.__dict__).model_dump())
 
         return user
