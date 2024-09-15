@@ -4,7 +4,7 @@ from auth_service.models.auth_models import LoginModel, GenerateResetPasswordTok
 from user_service.models.user_model import UserModel
 from common.exceptions import NotFoundException, BadRequestException
 from database_service.models.query_param import QueryParamsModel
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class AuthService:
     def __init__(self, model: DatabaseService[UserSchema] = DatabaseService(UserSchema)):
@@ -22,25 +22,25 @@ class AuthService:
             raise NotFoundException('Email and password not found')
         return users[0]
         
-    def reset_password(self, data:ResetPasswordModel):
+    async def reset_password(self, data:ResetPasswordModel):
         query = QueryParamsModel()
         query.limit = 1
         query.filter_by = "password_reset_token=%s" % (data.token)
         users = self.user_model.getAll(query)
 
-        if len(users) > 0:
+        if len(users) == 0:
             raise NotFoundException('token not found')
         
         user = users[0]
 
         current_datetime = datetime.now()
-        if (current_datetime - user.password_reset_token_generated_at).minute > 30:
+        if (current_datetime - user.password_reset_token_generated_at) > timedelta(minutes=30):
             raise BadRequestException('token expired')
 
         user.password = data.new_password
         user.updated_at = datetime.now()
         user.password_reset_token = None
-        user = self.user_model.updateOne(user.id, UserModel(user).model_dump())
+        user = self.user_model.updateOne(user.id, UserModel(**user.__dict__).model_dump())
         return user
 
 
