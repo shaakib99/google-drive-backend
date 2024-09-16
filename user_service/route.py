@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, UploadFile
 from typing import Annotated
 from database_service.models.query_param import QueryParamsModel
 from user_service.service import UsersService
@@ -9,20 +9,21 @@ from common.guards.rate_limiting_guard import RateLimitingGuard
 from common.guards.use_guard import UseGuard
 from common.models.dependencies_model import CommonDependenciesModel
 from common.utils import inject_common_dependencies
-from file_service.service import FileUploadService
-from file_service.local_storage_provider import LocalStorageProvider
 from common.interceptors.use_interceptor import UseInterceptor
 from common.interceptors.cache_interceptor import CacheInterceptor
+from common.interceptors.validate_cache_interceptor import ValidateCacheInterceptor
 
 router = APIRouter(prefix='/users')
 
 @router.get('', response_model=list[UserResponseModel], response_model_exclude_none=True)
 async def getAll(
     query: Annotated[QueryParamsModel, Depends(QueryParamsModel)], 
-    users_service: Annotated[UsersService, Depends(lambda: UsersService())]):
+    users_service: Annotated[UsersService, Depends(lambda: UsersService())],
+    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)]):
     return users_service.getAll(query)
 
 @router.get('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)
+@UseInterceptor(CacheInterceptor('users.one'))
 async def getOne(
     id: str, 
     users_service: Annotated[UsersService, Depends(UsersService)]):
@@ -34,27 +35,32 @@ async def createOne(
     users_service: Annotated[UsersService, Depends(lambda: UsersService())]):
     return users_service.createOne(data)
 
-@router.patch('/{id}', response_model=UserResponseModel, response_model_exclude_none=True)
+@router.patch('', response_model=UserResponseModel, response_model_exclude_none=True)
+@UseGuard(JWTAuthGuard())
+@UseGuard(RateLimitingGuard())
 async def updateOne(
     id: str, 
     data: UpdateUserModel, 
-    users_service: Annotated[UsersService, Depends(UsersService)]):
+    users_service: Annotated[UsersService, Depends(UsersService)],
+    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)]):
     return users_service.updateOne(id, data)
 
 
 @router.put('/update-profile-picture')
 @UseGuard(JWTAuthGuard())
 @UseGuard(RateLimitingGuard())
+@UseInterceptor(ValidateCacheInterceptor('users.one'))
 async def updateProfilePicture(
     file: UploadFile,
-    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)],
     users_service: Annotated[UsersService, Depends(lambda: UsersService())],
-    file_service: Annotated[FileUploadService, Depends(lambda: FileUploadService(LocalStorageProvider()))]
+    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)]
     ):
-    return 'hello'
+    return await users_service.update_profile_picture(file, dependencies.user)
 
-@router.delete('/{id}')
+@router.delete('')
+@UseGuard(JWTAuthGuard())
 async def deleteOne(
     id: str, 
-    users_service: Annotated[UsersService, Depends(UsersService)]):
+    users_service: Annotated[UsersService, Depends(UsersService)],
+    dependencies: Annotated[CommonDependenciesModel, Depends(inject_common_dependencies)]):
     return users_service.deleteOne(id)

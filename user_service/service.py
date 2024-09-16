@@ -4,10 +4,16 @@ from user_service.schemas.user_schema import UserSchema
 from user_service.models.user_model import UserModel
 from common.exceptions import NotFoundException
 from user_service.models.request_models import CreateUserModel, UpdateUserModel
+from file_service.service import FileUploadService
+from cache_service.service import CacheService
+from fastapi import UploadFile
+from datetime import datetime
 
 class UsersService:
-    def __init__(self, user_model = DatabaseService(UserSchema)):
+    def __init__(self, user_model = DatabaseService(UserSchema), file_upload_service = FileUploadService(), cache_service = CacheService()):
         self.user_model = user_model
+        self.file_upload_service = file_upload_service
+        self.cache_service = cache_service
     
     def getOne(self, id: str):
         user = self.user_model.getOne(id)
@@ -19,6 +25,7 @@ class UsersService:
         return self.user_model.getAll(query)
     
     def createOne(self, data: CreateUserModel):
+        self.cache_service.delete()
         return self.user_model.createOne(data)
     
     def updateOne(self, id: int, data: UpdateUserModel):
@@ -27,9 +34,18 @@ class UsersService:
 
         for key, value in data.model_dump().items():
             setattr(user_model, key, value)
+
+        user_model.updated_at = datetime.now()
         
         return self.user_model.updateOne(id, user_model)
     
     def deleteOne(self, id: int):
         self.getOne(id)
         return self.user_model.deleteOne(id)
+    
+    async def update_profile_picture(self, file: UploadFile, user: UserModel):
+        file = await self.file_upload_service.upload(file, user)
+
+        user.profile_picture_id = file.id
+
+        return self.updateOne(user.id, user)

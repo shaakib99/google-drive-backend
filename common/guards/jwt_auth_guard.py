@@ -22,7 +22,8 @@ class JWTAuthGuard(GuardABC):
         user = await self.validate_token(token)
         dependecies.user = UserModel.model_validate(user)
     
-    def validate_token(self, token: str) -> UserSchema:
+    async def validate_token(self, bearer_token: str) -> UserSchema:
+        token = bearer_token.split('Bearer ')[1]
         user_dict = decode(token, os.getenv('JWT_SECRET'), algorithms='HS256')
         if 'id' not in user_dict:
             raise UnauthorizeException()
