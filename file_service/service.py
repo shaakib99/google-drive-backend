@@ -13,13 +13,13 @@ class FileUploadService:
     
     async def upload(self, file: UploadFile, uploaded_by: UserModel) -> FileSchema:
         res = await self.file_upload_provider.upload(file)
-        return await self.save_file(res)
+        return await self.save_file(res, uploaded_by)
 
     async def upload_multiple(self, files: list[UploadFile], uploaded_by: UserModel) -> list[FileSchema]:
         uploaded_files = await self.file_upload_provider.upload_multiple(files)
         res = []
         for file in uploaded_files:
-            saved_file = await self.save_file(file)
+            saved_file = await self.save_file(file, uploaded_by)
             res.append(saved_file)
         return res
     
