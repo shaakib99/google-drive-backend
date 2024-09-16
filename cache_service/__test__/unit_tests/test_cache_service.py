@@ -18,11 +18,6 @@ def test_cache_service_get(mock_redis_cache_service, mock_redis):
     data_map = {}
     mock_redis_cache_service_instance.get = MagicMock(side_effect = lambda key: data_map.get(key))
     mock_redis_cache_service_instance.set = MagicMock(side_effect = lambda key, value: data_map.__setitem__(key, value))
-    # mock_redis_cache_service_instance.exists = MagicMock(side_effect = lambda key: key in data_map)
-    # mock_redis_cache_service_instance.connection.delete = MagicMock(side_effect = lambda key: data_map.__delitem__(key))
-    # mock_redis_cache_service_instance.connect.return_value = None 
-    # mock_redis_cache_service_instance.disconnect.return_value = None
-
 
     result = cache_service.get('test')
     assert result is None, 'Should return None'
@@ -50,9 +45,7 @@ def test_cache_service_set(mock_redis_cache_service, mock_redis):
 
     mock_redis_cache_service_instance.get = MagicMock(side_effect = lambda key: data_map.get(key))
     mock_redis_cache_service_instance.set = MagicMock(side_effect = lambda key, value: data_map.__setitem__(key, value))
-    # mock_redis_cache_service_instance.connection.delete = MagicMock(side_effect = lambda key: data_map.__delitem__(key))
-    # mock_redis_cache_service_instance.connect.return_value = None 
-    # mock_redis_cache_service_instance.disconnect.return_value = None
+
 
 
     cache_service.set('test', {'test': 'test'})
@@ -78,8 +71,6 @@ def test_cache_service_set(mock_redis_cache_service, mock_redis):
     mock_redis_cache_service_instance.get = MagicMock(side_effect = lambda key: data_map.get(key))
     mock_redis_cache_service_instance.delete = MagicMock(side_effect = lambda key: data_map.__delitem__(key))
     mock_redis_cache_service_instance.set = MagicMock(side_effect = lambda key, value: data_map.__setitem__(key, value))
-    # mock_redis_cache_service_instance.connect.return_value = None 
-    # mock_redis_cache_service_instance.disconnect.return_value = None
 
 
     cache_service.set('test', {'test': 'test'})
