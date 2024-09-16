@@ -40,7 +40,7 @@ class AuthService:
         user.password = data.new_password
         user.updated_at = datetime.now()
         user.password_reset_token = None
-        user = self.user_model.updateOne(user.id, UserModel(**user.__dict__).model_dump())
+        user = self.user_model.updateOne(user.id, UserModel.model_validate(user))
         return user
 
 
@@ -57,6 +57,6 @@ class AuthService:
 
         user.password_reset_token = ''
         user.password_reset_token_generated_at = datetime.now()
-        user = self.user_model.updateOne(user.id, UserModel(**user.__dict__).model_dump())
+        user = self.user_model.updateOne(user.id, UserModel.model_validate(user))
 
         return user
