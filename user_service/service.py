@@ -6,6 +6,7 @@ from common.exceptions import NotFoundException
 from user_service.models.request_models import CreateUserModel, UpdateUserModel
 from file_service.service import FileUploadService
 from cache_service.service import CacheService
+from common.utils import hash_password
 from fastapi import UploadFile
 from datetime import datetime
 
@@ -25,7 +26,7 @@ class UsersService:
         return self.user_model.getAll(query)
     
     def createOne(self, data: CreateUserModel):
-        self.cache_service.delete()
+        data.password = hash_password(data.password)
         return self.user_model.createOne(data)
     
     def updateOne(self, id: int, data: UpdateUserModel):

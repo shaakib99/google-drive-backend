@@ -3,6 +3,7 @@ from user_service.schemas.user_schema import UserSchema
 from auth_service.models.auth_models import LoginModel, GenerateResetPasswordTokenModel, ResetPasswordModel
 from user_service.models.user_model import UserModel
 from common.exceptions import NotFoundException, BadRequestException
+from common.utils import hash_password
 from database_service.models.query_param import QueryParamsModel
 from datetime import datetime, timedelta
 
@@ -11,7 +12,7 @@ class AuthService:
         self.user_model = model
     
     async def login(self, loginModel: LoginModel):
-        encrypted_password = loginModel.password
+        encrypted_password = hash_password(loginModel.password)
         query  = QueryParamsModel()
         query.limit = 1
         query.filter_by = "email='%s' and password='%s'" % (loginModel.email, encrypted_password)
