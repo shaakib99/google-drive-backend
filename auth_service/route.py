@@ -12,10 +12,7 @@ from user_service.models.response_models import UserResponseModel
 
 router = APIRouter(prefix='/users')
 
-
-
 @router.post('/login', response_model=UserResponseModel, response_model_exclude_none=True, status_code=200)
-@UseInterceptor(JWTInterceptor())
 async def login(
     data: LoginModel, 
     auth_service: Annotated[AuthService, Depends(lambda: AuthService())],

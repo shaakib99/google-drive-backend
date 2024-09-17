@@ -3,9 +3,10 @@ from user_service.schemas.user_schema import UserSchema
 from auth_service.models.auth_models import LoginModel, GenerateResetPasswordTokenModel, ResetPasswordModel
 from user_service.models.user_model import UserModel
 from common.exceptions import NotFoundException, BadRequestException
-from common.utils import hash_password
+from common.utils import hash_password, encrypt
 from database_service.models.query_param import QueryParamsModel
 from datetime import datetime, timedelta
+import json
 
 class AuthService:
     def __init__(self, model: DatabaseService[UserSchema] = DatabaseService(UserSchema)):
@@ -38,9 +39,11 @@ class AuthService:
         if (current_datetime - user.password_reset_token_generated_at) > timedelta(minutes=30):
             raise BadRequestException('token expired')
 
-        user.password = data.new_password
+        user.password = hash_password(data.new_password)
         user.updated_at = datetime.now()
         user.password_reset_token = None
+        user.password_reset_token_generated_at = None
+
         user = self.user_model.updateOne(user.id, UserModel.model_validate(user))
         return user
 
@@ -56,8 +59,10 @@ class AuthService:
         
         user = users[0]
 
-        user.password_reset_token = ''
         user.password_reset_token_generated_at = datetime.now()
+        user.updated_at = datetime.now()
+        user.password_reset_token = encrypt(json.dumps(UserModel.model_validate(user).model_dump()))
+
         user = self.user_model.updateOne(user.id, UserModel.model_validate(user))
 
         return user
